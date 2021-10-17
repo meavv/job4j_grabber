@@ -10,10 +10,10 @@ public class SqlRuParse {
         Document doc = Jsoup.connect("https://www.sql.ru/forum/job-offers").get();
         Elements row = doc.select(".postslisttopic");
         for (Element td : row) {
-            Element parent = td.parent();
-            System.out.println(parent.child(1).child(0).attr("href"));
-            System.out.println(parent.child(1).child(0).text());
-            System.out.println(parent.child(5).text());
+            Element element = td.child(0);
+            System.out.println(element.attr("href"));
+            System.out.println(element.text());
+            System.out.println(td.parent().child(5).text());
         }
     }
 }
