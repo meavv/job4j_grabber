@@ -14,15 +14,15 @@ import static org.quartz.TriggerBuilder.newTrigger;
 
 public class AlertRabbit {
 
+    static Properties properties = readPropertiesTime();
+
     public static Connection con() throws Exception {
-        Properties properties = readPropertiesTime();
-        Class.forName(properties.get("driver").toString());
-        return DriverManager.getConnection(properties.get("url").toString(),
-                properties.get("login").toString(), properties.get("password").toString());
+        Class.forName(properties.getProperty("driver"));
+        return DriverManager.getConnection(properties.getProperty("url"),
+                properties.getProperty("login"), properties.getProperty("password"));
     }
 
-    public static void main(String[] args) throws ClassNotFoundException {
-            Properties properties = readPropertiesTime();
+    public static void main(String[] args) {
             try (Connection connection = con()) {
                 Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
                 scheduler.start();
@@ -31,7 +31,7 @@ public class AlertRabbit {
                 JobDetail job = newJob(Rabbit.class).usingJobData(data).build();
                 SimpleScheduleBuilder times = simpleSchedule()
                         .withIntervalInSeconds(Integer.parseInt(properties
-                                .get("rabbit.interval").toString()))
+                                .getProperty("rabbit.interval")))
                         .repeatForever();
                 Trigger trigger = newTrigger()
                         .startNow()
