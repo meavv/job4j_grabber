@@ -5,5 +5,3 @@ create table post (
 	link text unique,
 	created date
 );
-
-select * from post;
