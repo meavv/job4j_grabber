@@ -39,12 +39,4 @@ public class SqlRuDateTimeParser implements DateTimeParser {
         }
         return localDateTime;
     }
-
-    public static void main(String[] args) {
-        SqlRuDateTimeParser s = new SqlRuDateTimeParser();
-        System.out.println(s.parse("сегодня, 22:29"));
-        System.out.println(s.parse("вчера, 22:29"));
-        System.out.println(s.parse("12 май 20, 08:17"));
-    }
-
 }

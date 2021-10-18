@@ -4,22 +4,57 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import ru.job4j.Post;
+import ru.job4j.grabber.Parse;
+import ru.job4j.grabber.utils.DateTimeParser;
+import ru.job4j.grabber.utils.SqlRuDateTimeParser;
 
-public class SqlRuParse {
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+public class SqlRuParse implements Parse {
+
+    private final DateTimeParser dateTimeParser;
+    List<Post> listPost = new ArrayList<>();
+
+    public SqlRuParse(DateTimeParser dateTimeParser) {
+        this.dateTimeParser = dateTimeParser;
+    }
+
     public static void main(String[] args) throws Exception {
+        DateTimeParser dateTimeParser = new SqlRuDateTimeParser();
+        SqlRuParse sqlRuParse = new SqlRuParse(dateTimeParser);
         String url = "https://www.sql.ru/forum/job-offers/";
+        sqlRuParse.list(url);
+    }
+
+    @Override
+    public List<Post> list(String link) throws Exception {
+        DateTimeParser dateTimeParser = new SqlRuDateTimeParser();
+        SqlRuParse sqlRuParse = new SqlRuParse(dateTimeParser);
         for (int i = 1; i < 6; i++) {
-            url = url + i;
-            System.out.println(url);
+            String url = link + i;
             Document doc = Jsoup.connect(url).get();
             Elements row = doc.select(".postslisttopic");
             for (Element td : row) {
-                Element element = td.child(0);
-                System.out.println(element.attr("href"));
-                System.out.println(element.text());
-                System.out.println(td.parent().child(5).text());
+                listPost.add(sqlRuParse.detail(td.child(0).attr("href")));
             }
-            url = "https://www.sql.ru/forum/job-offers/";
+            url = link;
         }
+        return listPost;
+    }
+
+    @Override
+    public Post detail(String link) throws Exception {
+        Document doc = Jsoup.connect(link).get();
+        Post post = new Post();
+        String time = doc.select(".msgFooter").get(0).text();
+        post.setDescription(ParseBody.parsing(link));
+        post.setLink(link);
+        post.setTitle(doc.title());
+        post.setCreated(new SqlRuDateTimeParser().parse(time.substring(0, time.indexOf("[") - 1)));
+        return post;
     }
 }
