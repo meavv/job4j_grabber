@@ -17,7 +17,6 @@ import java.util.List;
 public class SqlRuParse implements Parse {
 
     private final DateTimeParser dateTimeParser;
-    List<Post> listPost = new ArrayList<>();
 
     public SqlRuParse(DateTimeParser dateTimeParser) {
         this.dateTimeParser = dateTimeParser;
@@ -32,6 +31,7 @@ public class SqlRuParse implements Parse {
 
     @Override
     public List<Post> list(String link) throws Exception {
+        List<Post> listPost = new ArrayList<>();
         DateTimeParser dateTimeParser = new SqlRuDateTimeParser();
         SqlRuParse sqlRuParse = new SqlRuParse(dateTimeParser);
         for (int i = 1; i < 6; i++) {
@@ -54,7 +54,7 @@ public class SqlRuParse implements Parse {
         post.setDescription(ParseBody.parsing(link));
         post.setLink(link);
         post.setTitle(doc.title());
-        post.setCreated(new SqlRuDateTimeParser().parse(time.substring(0, time.indexOf("[") - 1)));
+        post.setCreated(dateTimeParser.parse(time.substring(0, time.indexOf("[") - 1)));
         return post;
     }
 }
