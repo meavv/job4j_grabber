@@ -7,6 +7,17 @@ public class Post {
 
     private int id;
 
+    public Post(int id, String title, String link, String description, LocalDateTime created) {
+        this.id = id;
+        this.title = title;
+        this.link = link;
+        this.description = description;
+        this.created = created;
+    }
+
+    public Post() {
+    }
+
     public int getId() {
         return id;
     }
